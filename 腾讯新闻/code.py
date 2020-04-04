@@ -40,6 +40,19 @@ def parase_index(url):
     soup = BeautifulSoup(html, "lxml")
     uls=soup.find_all('ul')
 
+    news_type=""#新闻类别
+    if "finance" in url:
+        news_type="财经"
+    elif "ent" in url:
+        news_type="娱乐"
+    elif "milite" in url:
+        news_type="军事"
+    elif "tech" in url:
+        news_type="科技"
+    elif "world" in url:
+        news_type="国际"
+    print("==========================={}===========================".format(news_type))
+    
     for l in uls[1].find_all('li'):
         detail_url=l.a.attrs['href']#详情页链接
         
@@ -47,17 +60,9 @@ def parase_index(url):
             title,content=getContent(detail_url)#获取详情页的标题名称，正文
         except:
             continue
+       
         print(title)
-        tags=l.find_all(attrs={'class':'tags'})#新闻标签
-        
-        news_type=""#新闻类别
-        if "finance" in url:
-            news_type="财经"
-        elif "ent" in url:
-            news_type="娱乐"
-        elif "milite" in url:
-            news_type="军事"
-
+        tags=l.find_all(attrs={'class':'tags'})#新闻标签       
         #提取标签文字
         tags=re.findall('target="_blank">(.*?)</a>',str(tags[0]))
         tags=",".join(tags)
@@ -109,10 +114,13 @@ def word_count(data):
     items.sort(key=lambda x:x[1], reverse=True)   
     return pd.DataFrame(items)
 
-#需要爬取的链接：经济、娱乐、军事
+#需要爬取的链接：经济、娱乐、军事、科技、国际
 url_list=['https://new.qq.com/ch/finance/',
         'https://new.qq.com/ch/ent/',
-        'https://new.qq.com/ch/milite/']
+        'https://new.qq.com/ch/milite/',
+         'https://new.qq.com/ch/tech/',
+          'https://new.qq.com/ch/world/'
+         ]
 
 #定义数据集保存的文件名
 file_name="NewsData.csv"
